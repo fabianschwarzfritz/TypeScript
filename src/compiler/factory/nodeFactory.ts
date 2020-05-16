@@ -1109,6 +1109,8 @@ namespace ts {
             );
             setChild(node, node.constraint = constraint);
             setChild(node, node.default = defaultType);
+            // extraneous nodes set by the parser
+            node.expression = undefined;
             if (!skipTransformationFlags) {
                 markTypeScriptOnly(node);
             }
@@ -1144,6 +1146,8 @@ namespace ts {
             );
             setChild(node, node.dotDotDotToken = dotDotDotToken);
             setChild(node, node.questionToken = questionToken);
+            // extraneous nodes set by the parser
+            node.jsDoc = undefined;
             if (!skipTransformationFlags) {
                 if (isThisIdentifier(node.name)) {
                     markTypeScriptOnly(node);
@@ -1216,6 +1220,9 @@ namespace ts {
             );
             setChild(node, node.type = type);
             setChild(node, node.questionToken = questionToken);
+            // extraneous nodes set by the parser
+            node.initializer = undefined;
+            node.jsDoc = undefined;
             if (!skipTransformationFlags) {
                 markTypeScriptOnly(node);
             }
@@ -1257,6 +1264,8 @@ namespace ts {
             );
             setChild(node, node.questionToken = questionOrExclamationToken !== undefined && questionOrExclamationToken.kind === SyntaxKind.QuestionToken ? questionOrExclamationToken : undefined);
             setChild(node, node.exclamationToken = questionOrExclamationToken !== undefined && questionOrExclamationToken.kind === SyntaxKind.ExclamationToken ? questionOrExclamationToken : undefined);
+            // extraneous nodes set by the parser
+            node.jsDoc = undefined;
             if (!skipTransformationFlags) {
                 if (isComputedPropertyName(node.name) || (hasStaticModifier(node) && node.initializer)) {
                     markTypeScriptClassSyntax(node);
@@ -1309,6 +1318,8 @@ namespace ts {
                 type
             );
             setChild(node, node.questionToken = questionToken);
+            // extraneous nodes set by the parser
+            node.jsDoc = undefined;
             if (!skipTransformationFlags) {
                 markTypeScriptOnly(node);
             }
@@ -1359,6 +1370,9 @@ namespace ts {
             );
             setChild(node, node.asteriskToken = asteriskToken);
             setChild(node, node.questionToken = questionToken);
+            // extraneous nodes set by the parser
+            node.exclamationToken = undefined;
+            node.jsDoc = undefined;
             if (!skipTransformationFlags) {
                 if (questionToken) {
                     markTypeScript(node);
@@ -1422,6 +1436,8 @@ namespace ts {
                 /*type*/ undefined,
                 body
             );
+            // extraneous nodes set by the parser
+            node.jsDoc = undefined;
             if (!skipTransformationFlags) {
                 markES2015(node);
             }
@@ -1463,6 +1479,8 @@ namespace ts {
                 type,
                 body
             );
+            // extraneous nodes set by the parser
+            node.jsDoc = undefined;
             return finish(node);
         }
 
@@ -1504,6 +1522,8 @@ namespace ts {
                 /*type*/ undefined,
                 body
             );
+            // extraneous nodes set by the parser
+            node.jsDoc = undefined;
             return finish(node);
         }
 
@@ -1540,6 +1560,8 @@ namespace ts {
                 parameters,
                 type
             );
+            // extraneous nodes set by the parser
+            node.jsDoc = undefined;
             if (!skipTransformationFlags) {
                 markTypeScriptOnly(node);
             }
@@ -1575,6 +1597,8 @@ namespace ts {
                 parameters,
                 type
             );
+            // extraneous nodes set by the parser
+            node.jsDoc = undefined;
             if (!skipTransformationFlags) {
                 markTypeScriptOnly(node);
             }
@@ -1611,6 +1635,8 @@ namespace ts {
                 parameters,
                 type
             );
+            // extraneous nodes set by the parser
+            node.jsDoc = undefined;
             if (!skipTransformationFlags) {
                 markTypeScriptOnly(node);
             }
@@ -1697,6 +1723,8 @@ namespace ts {
                 parameters,
                 type
             );
+            // extraneous nodes set by the parser
+            node.jsDoc = undefined;
             if (!skipTransformationFlags) {
                 markTypeScriptOnly(node);
             }
@@ -1732,6 +1760,8 @@ namespace ts {
                 parameters,
                 type
             );
+            // extraneous nodes set by the parser
+            node.jsDoc = undefined;
             if (!skipTransformationFlags) {
                 markTypeScriptOnly(node);
             }
@@ -2165,6 +2195,7 @@ namespace ts {
         function createPropertyAccessExpression(expression: Expression, name: string | Identifier | PrivateIdentifier) {
             const node = createBaseNode<PropertyAccessExpression>(SyntaxKind.PropertyAccessExpression);
             setChild(node, node.expression = parenthesizerRules().parenthesizeLeftSideOfAccess(expression));
+            node.questionDotToken = undefined;
             setChild(node, node.name = asName(name));
             if (!skipTransformationFlags) {
                 // super method calls require a lexical 'this'
@@ -2217,6 +2248,7 @@ namespace ts {
         function createElementAccessExpression(expression: Expression, index: number | Expression) {
             const node = createBaseNode<ElementAccessExpression>(SyntaxKind.ElementAccessExpression);
             setChild(node, node.expression = parenthesizerRules().parenthesizeLeftSideOfAccess(expression));
+            node.questionDotToken = undefined;
             setChild(node, node.argumentExpression = asExpression(index));
             if (!skipTransformationFlags) {
                 // super method calls require a lexical 'this'
@@ -2269,6 +2301,7 @@ namespace ts {
         function createCallExpression(expression: Expression, typeArguments: readonly TypeNode[] | undefined, argumentsArray: readonly Expression[] | undefined) {
             const node = createBaseNode<CallExpression>(SyntaxKind.CallExpression);
             setChild(node, node.expression = parenthesizerRules().parenthesizeLeftSideOfAccess(expression));
+            node.questionDotToken = undefined;
             setChildren(node, node.typeArguments = asNodeArray(typeArguments));
             setChildren(node, node.arguments = parenthesizerRules().parenthesizeExpressionsOfCommaDelimitedList(createNodeArray(argumentsArray)));
             if (!skipTransformationFlags) {
@@ -2357,6 +2390,8 @@ namespace ts {
             setChild(node, node.tag = parenthesizerRules().parenthesizeLeftSideOfAccess(tag));
             setChildren(node, node.typeArguments = asNodeArray(typeArguments));
             setChild(node, node.template = template);
+            // extraneous nodes set by the parser
+            node.questionDotToken = undefined;
             if (!skipTransformationFlags) {
                 markES2015(node);
                 if (typeArguments) {
@@ -2401,6 +2436,8 @@ namespace ts {
         function createParenthesizedExpression(expression: Expression) {
             const node = createBaseNode<ParenthesizedExpression>(SyntaxKind.ParenthesizedExpression);
             setChild(node, node.expression = expression);
+            // extraneous nodes set by the parser
+            node.jsDoc = undefined;
             return finish(node);
         }
 
@@ -2432,6 +2469,8 @@ namespace ts {
                 body
             );
             setChild(node, node.asteriskToken = asteriskToken);
+            // extraneous nodes set by the parser
+            node.jsDoc = undefined;
             if (!skipTransformationFlags) {
                 if (typeParameters) {
                     markTypeScript(node);
@@ -2493,6 +2532,8 @@ namespace ts {
                 parenthesizerRules().parenthesizeConciseBodyOfArrowFunction(body)
             );
             setChild(node, node.equalsGreaterThanToken = equalsGreaterThanToken || createToken(SyntaxKind.EqualsGreaterThanToken));
+            // extraneous nodes set by the parser
+            node.jsDoc = undefined;
             if (!skipTransformationFlags) {
                 if (hasSyntacticModifier(node, ModifierFlags.Async)) markES2017(node);
                 markES2015(node);
@@ -2814,6 +2855,8 @@ namespace ts {
                 heritageClauses,
                 members
             );
+            // extraneous nodes set by the parser
+            node.jsDoc = undefined;
             if (!skipTransformationFlags) {
                 markES2015(node);
             }
@@ -3002,6 +3045,8 @@ namespace ts {
         function createVariableStatement(modifiers: readonly Modifier[] | undefined, declarationList: VariableDeclarationList | readonly VariableDeclaration[]) {
             const node = createBaseDeclaration<VariableStatement>(SyntaxKind.VariableStatement, /*decorators*/ undefined, modifiers);
             setChild(node, node.declarationList = isArray(declarationList) ? createVariableDeclarationList(declarationList) : declarationList);
+            // extraneous nodes set by the parser
+            node.jsDoc = undefined;
             if (!skipTransformationFlags) {
                 if (hasSyntacticModifier(node, ModifierFlags.Ambient)) {
                     markTypeScriptOnly(node);
@@ -3027,6 +3072,8 @@ namespace ts {
         function createExpressionStatement(expression: Expression): ExpressionStatement {
             const node = createBaseNode<ExpressionStatement>(SyntaxKind.ExpressionStatement);
             setChild(node, node.expression = parenthesizerRules().parenthesizeExpressionOfExpressionStatement(expression));
+            // extraneous nodes set by the parser
+            node.jsDoc = undefined;
             return finish(node);
         }
 
@@ -3239,6 +3286,8 @@ namespace ts {
             const node = createBaseNode<LabeledStatement>(SyntaxKind.LabeledStatement);
             setChild(node, node.label = asName(label));
             setChild(node, node.statement = asEmbeddedStatement(statement));
+            // extraneous nodes set by the parser
+            node.jsDoc = undefined;
             return finish(node);
         }
 
@@ -3360,6 +3409,8 @@ namespace ts {
                 body
             );
             setChild(node, node.asteriskToken = asteriskToken);
+            // extraneous nodes set by the parser
+            node.jsDoc = undefined;
             if (!skipTransformationFlags) {
                 if (!body || hasSyntacticModifier(node, ModifierFlags.Ambient)) {
                     markTypeScriptOnly(node);
@@ -3424,6 +3475,8 @@ namespace ts {
                 heritageClauses,
                 members
             );
+            // extraneous nodes set by the parser
+            node.jsDoc = undefined;
             if (!skipTransformationFlags) {
                 if (hasSyntacticModifier(node, ModifierFlags.Ambient)) {
                     markTypeScriptOnly(node);
@@ -3476,6 +3529,8 @@ namespace ts {
                 heritageClauses
             );
             setChildren(node, node.members = createNodeArray(members));
+            // extraneous nodes set by the parser
+            node.jsDoc = undefined;
             if (!skipTransformationFlags) {
                 markTypeScriptOnly(node);
             }
@@ -3518,6 +3573,8 @@ namespace ts {
                 typeParameters
             );
             setChild(node, node.type = type);
+            // extraneous nodes set by the parser
+            node.jsDoc = undefined;
             if (!skipTransformationFlags) {
                 markTypeScriptOnly(node);
             }
@@ -3556,6 +3613,8 @@ namespace ts {
                 name
             );
             setChildren(node, node.members = createNodeArray(members));
+            // extraneous nodes set by the parser
+            node.jsDoc = undefined;
             if (!skipTransformationFlags) {
                 markTypeScript(node);
             }
@@ -3593,6 +3652,8 @@ namespace ts {
             node.flags |= flags & (NodeFlags.Namespace | NodeFlags.NestedNamespace | NodeFlags.GlobalAugmentation);
             setChild(node, node.name = name);
             setChild(node, node.body = body);
+            // extraneous nodes set by the parser
+            node.jsDoc = undefined;
             if (!skipTransformationFlags) {
                 if (hasSyntacticModifier(node, ModifierFlags.Ambient)) {
                     markTypeScriptOnly(node);
@@ -3652,6 +3713,10 @@ namespace ts {
         function createNamespaceExportDeclaration(name: string | Identifier) {
             const node = createBaseNode<NamespaceExportDeclaration>(SyntaxKind.NamespaceExportDeclaration);
             setChild(node, node.name = asName(name));
+            // extraneous nodes set by the parser
+            node.decorators = undefined;
+            node.modifiers = undefined;
+            node.jsDoc = undefined;
             if (!skipTransformationFlags) {
                 markTypeScriptOnly(node);
             }
@@ -3679,6 +3744,8 @@ namespace ts {
                 name
             );
             setChild(node, node.moduleReference = moduleReference);
+            // extraneous nodes set by the parser
+            node.jsDoc = undefined;
             if (!skipTransformationFlags) {
                 if (moduleReference.kind !== SyntaxKind.ExternalModuleReference) markTypeScript(node);
             }
@@ -3715,6 +3782,8 @@ namespace ts {
             );
             setChild(node, node.importClause = importClause);
             setChild(node, node.moduleSpecifier = moduleSpecifier);
+            // extraneous nodes set by the parser
+            node.jsDoc = undefined;
             return finish(node);
         }
 
@@ -3834,6 +3903,8 @@ namespace ts {
             setChild(node, node.expression = isExportEquals
                 ? parenthesizerRules().parenthesizeRightSideOfBinary(SyntaxKind.EqualsToken, /*leftSide*/ undefined, expression)
                 : parenthesizerRules().parenthesizeExpressionOfExportDefault(expression));
+            // extraneous nodes set by the parser
+            node.jsDoc = undefined;
             return finish(node);
         }
 
@@ -3867,6 +3938,8 @@ namespace ts {
             node.isTypeOnly = isTypeOnly;
             setChild(node, node.exportClause = exportClause);
             setChild(node, node.moduleSpecifier = moduleSpecifier);
+            // extraneous nodes set by the parser
+            node.jsDoc = undefined;
             return finish(node);
         }
 
@@ -4011,6 +4084,8 @@ namespace ts {
                 parameters,
                 type
             );
+            // extraneous nodes set by the parser
+            node.jsDoc = undefined;
             return finishJSDoc(node);
         }
 
@@ -4633,8 +4708,13 @@ namespace ts {
         function createPropertyAssignment(name: string | PropertyName, initializer: Expression) {
             const node = createBaseNode<PropertyAssignment>(SyntaxKind.PropertyAssignment);
             setChild(node, node.name = asName(name));
-            setChild(node, node.questionToken = undefined);
             setChild(node, node.initializer = parenthesizerRules().parenthesizeExpressionForDisallowedComma(initializer));
+            // extraneous nodes set by the parser
+            node.decorators = undefined;
+            node.modifiers = undefined;
+            node.questionToken = undefined;
+            node.exclamationToken = undefined;
+            node.jsDoc = undefined;
             return finish(node);
         }
 
@@ -4666,6 +4746,11 @@ namespace ts {
             setChild(node, node.objectAssignmentInitializer = objectAssignmentInitializer !== undefined
                 ? parenthesizerRules().parenthesizeExpressionForDisallowedComma(objectAssignmentInitializer)
                 : undefined);
+            // extraneous nodes set by the parser
+            node.equalsToken = undefined;
+            node.questionToken = undefined;
+            node.exclamationToken = undefined;
+            node.jsDoc = undefined;
             if (!skipTransformationFlags) {
                 markES2015(node);
             }
@@ -4694,6 +4779,8 @@ namespace ts {
         function createSpreadAssignment(expression: Expression) {
             const node = createBaseNode<SpreadAssignment>(SyntaxKind.SpreadAssignment);
             setChild(node, node.expression = parenthesizerRules().parenthesizeExpressionForDisallowedComma(expression));
+            // extraneous nodes set by the parser
+            node.jsDoc = undefined;
             if (!skipTransformationFlags) {
                 markES2018(node);
                 markObjectRestOrSpread(node);
@@ -4717,6 +4804,8 @@ namespace ts {
             const node = createBaseNode<EnumMember>(SyntaxKind.EnumMember);
             setChild(node, node.name = asName(name));
             setChild(node, node.initializer = initializer && parenthesizerRules().parenthesizeExpressionForDisallowedComma(initializer));
+            // extraneous nodes set by the parser
+            node.jsDoc = undefined;
             if (!skipTransformationFlags) {
                 markTypeScript(node);
             }

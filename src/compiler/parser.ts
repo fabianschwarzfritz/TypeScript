@@ -682,14 +682,19 @@ namespace ts {
         let SourceFileConstructor: new (kind: SyntaxKind, pos: number, end: number) => Node;
         // tslint:enable variable-name
 
+        function countNode(node: Node) {
+            nodeCount++;
+            return node;
+        }
+
         // Rather than using `createBaseNodeFactory` here, we establish a `BaseNodeFactory` that closes over the
         // constructors above, which are reset each time `initializeState` is called.
         const baseNodeFactory: BaseNodeFactory = {
-            createBaseSourceFileNode: kind => new SourceFileConstructor(kind, /*pos*/ 0, /*end*/ 0),
-            createBaseIdentifierNode: kind => new IdentifierConstructor(kind, /*pos*/ 0, /*end*/ 0),
-            createBasePrivateIdentifierNode: kind => new PrivateIdentifierConstructor(kind, /*pos*/ 0, /*end*/ 0),
-            createBaseTokenNode: kind => new TokenConstructor(kind, /*pos*/ 0, /*end*/ 0),
-            createBaseNode: kind => new NodeConstructor(kind, /*pos*/ 0, /*end*/ 0)
+            createBaseSourceFileNode: kind => countNode(new SourceFileConstructor(kind, /*pos*/ 0, /*end*/ 0)),
+            createBaseIdentifierNode: kind => countNode(new IdentifierConstructor(kind, /*pos*/ 0, /*end*/ 0)),
+            createBasePrivateIdentifierNode: kind => countNode(new PrivateIdentifierConstructor(kind, /*pos*/ 0, /*end*/ 0)),
+            createBaseTokenNode: kind => countNode(new TokenConstructor(kind, /*pos*/ 0, /*end*/ 0)),
+            createBaseNode: kind => countNode(new NodeConstructor(kind, /*pos*/ 0, /*end*/ 0))
         };
 
         const factory = createNodeFactory(NodeFactoryFlags.NoParenthesizerRules | NodeFactoryFlags.NoNodeConverters, baseNodeFactory, {
@@ -704,14 +709,9 @@ namespace ts {
                 }
             },
             onFinishNode(node) {
-                if (setParentNodes) {
-                    if (hasJSDocNodes(node)) {
-                        setEachParent(node.jsDoc, node);
-                    }
+                if (setParentNodes && hasJSDocNodes(node)) {
+                    setEachParent(node.jsDoc, node);
                 }
-            },
-            onCreateNode(_) {
-                nodeCount++;
             }
         });
 
